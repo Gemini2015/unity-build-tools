@@ -21,7 +21,7 @@ version=0.0.1
 appname=Demo
 
 # projectCodeName
-projectCodeName=CC
+projectCodeName=zongzi
 
 # developer, distribution
 codeSign=developer
