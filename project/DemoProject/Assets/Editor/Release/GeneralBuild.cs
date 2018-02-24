@@ -15,6 +15,7 @@ namespace CC.Release
 
 		public virtual bool Setup()
 		{
+            SetDefineSymbol();
             SetAppInfo();
 			return true;
 		}
@@ -26,7 +27,25 @@ namespace CC.Release
             {
                 Directory.CreateDirectory(buildPath);
             }
-			return true;
+
+            ReleaseUtil.CleanPlugin(ReleaseConfig.GetBuildTarget());
+
+            #region Create AssetBundle
+
+            //AssetBundles.AssetBundleUtil.Build();
+            //AssetBundles.AssetBundleUtil.CopyToStreamingAssets();
+
+            #endregion Create AssetBundle
+
+
+			ReleaseUtil.CreateVersion();
+			var patchPath = ReleaseConfig.Setting[ReleaseConfig.SettingDefine.PatchPath];
+			if(!Directory.Exists(patchPath))
+			{
+				Directory.CreateDirectory(patchPath);
+			}
+
+            return true;
 		}
 
         public virtual bool Build()
@@ -36,6 +55,8 @@ namespace CC.Release
 
         public virtual bool PostBuild(BuildTarget target, string pathToBuiltProject)
 		{
+			var patchPath = ReleaseConfig.Setting[ReleaseConfig.SettingDefine.PatchPath];
+			ReleaseUtil.CreateHotpatch(patchPath);
 			return true;
 		}
 
@@ -44,6 +65,44 @@ namespace CC.Release
             PlayerSettings.bundleVersion = ReleaseConfig.Setting[ReleaseConfig.SettingDefine.Version];
             PlayerSettings.productName = ReleaseConfig.Setting[ReleaseConfig.SettingDefine.AppName];
         }
-        
+
+        private void SetDefineSymbol()
+        {
+            var buildTarget = ReleaseConfig.GetBuildTargetGroup();
+            var buildConfig = ReleaseConfig.Setting[ReleaseConfig.SettingDefine.BuildConfig];
+            switch(buildConfig)
+            {
+                case ReleaseConfig.BuildConfig.InternetDev:
+                    {
+                        var symbols = PlayerSettings.GetScriptingDefineSymbolsForGroup(buildTarget);
+                        if(string.IsNullOrEmpty(symbols))
+                            symbols = "InternetDev";
+                        else
+                        {
+                            if(!symbols.Contains("InternetDev"))
+                                symbols = symbols + ";" + "InternetDev";
+                        }
+
+                        PlayerSettings.SetScriptingDefineSymbolsForGroup(buildTarget, symbols);
+                    }
+                    break;
+
+                case ReleaseConfig.BuildConfig.InternetDis:
+                default:
+                    {
+                        var symbols = PlayerSettings.GetScriptingDefineSymbolsForGroup(buildTarget);
+                        if(string.IsNullOrEmpty(symbols))
+                            symbols = "InternetDis";
+                        else
+                        {
+                            if(!symbols.Contains("InternetDis"))
+                                symbols = symbols + ";" + "InternetDis";
+                        }
+
+                        PlayerSettings.SetScriptingDefineSymbolsForGroup(buildTarget, symbols);
+                    }
+                    break;
+            }
+        }
     }
 }

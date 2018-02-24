@@ -7,7 +7,7 @@ using System.IO;
 
 namespace CC.Release.iOS
 {
-    class iOSBuild: GeneralBuild
+    internal class iOSBuild: GeneralBuild
     {
         public override BuildTarget Target
         {
@@ -29,8 +29,9 @@ namespace CC.Release.iOS
         {
             base.Setup();
 
-            PlayerSettings.bundleIdentifier = ReleaseConfig.iOS.BundleID;
-            PlayerSettings.iPhoneBundleIdentifier = ReleaseConfig.iOS.BundleID;
+            PlayerSettings.bundleIdentifier = ReleaseConfig.iOS.GetValue(ReleaseConfig.iOS.KeyDefine.BundleID);
+            PlayerSettings.iPhoneBundleIdentifier = ReleaseConfig.iOS.GetValue(ReleaseConfig.iOS.KeyDefine.BundleID);
+            PlayerSettings.iOS.buildNumber = ReleaseConfig.Setting[ReleaseConfig.SettingDefine.BundleVersionCode];
 
             return true;
         }
@@ -52,6 +53,16 @@ namespace CC.Release.iOS
         {
             base.PostBuild(target, pathToBuiltProject);
 
+            if(target != BuildTarget.iOS)
+            {
+                UnityEngine.Debug.LogError("iOSBuild.PostBuild target error");
+                return false;
+            }
+
+            XcodeSetting.Setup(pathToBuiltProject);
+
+            XcodeBuild.Init();
+            XcodeBuild.Build(pathToBuiltProject);
             return true;
         }
     }

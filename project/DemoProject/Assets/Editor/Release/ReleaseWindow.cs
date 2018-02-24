@@ -26,15 +26,19 @@ namespace CC.Release
 
         public ReleaseWindow()
 		{
-			ReleaseConfig.Reset();
-			dummySetting = new Dictionary<string, string>();
-			foreach(var item in ReleaseConfig.Setting)
-			{
-				dummySetting[item.Key] = item.Value;
-			}
 		}
 
-		private void OnGUI()
+        private void OnEnable()
+        {
+            ReleaseConfig.Reset();
+            dummySetting = new Dictionary<string, string>();
+            foreach(var item in ReleaseConfig.Setting)
+            {
+                dummySetting[item.Key] = item.Value;
+            }
+        }
+
+        private void OnGUI()
 		{
             if(setDefaultWindowSize)
             {

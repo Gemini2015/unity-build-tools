@@ -7,7 +7,7 @@ using UnityEditor;
 
 namespace CC.Release.Android
 {
-    class AndroidBuild: GeneralBuild
+    internal class AndroidBuild: GeneralBuild
     {
         public override BuildTarget Target
         {
@@ -31,7 +31,11 @@ namespace CC.Release.Android
 
             SetKeyStore();
 
+            PlayerSettings.Android.bundleVersionCode = int.Parse(ReleaseConfig.Setting[ReleaseConfig.SettingDefine.BundleVersionCode]);
+
             PlayerSettings.bundleIdentifier = ReleaseConfig.Android.BundleID;
+
+			EditorUserBuildSettings.androidBuildSystem = AndroidBuildSystem.Gradle;
 
             return true;
         }
@@ -60,7 +64,7 @@ namespace CC.Release.Android
                 var apkPath = Path.Combine(outputPath, apkName);
                 BuildPipeline.BuildPlayer(levels, apkPath, BuildTarget.Android, BuildOptions.ShowBuiltPlayer);
             }
-            
+
             return true;
         }
 

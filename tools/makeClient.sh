@@ -32,11 +32,15 @@ androidExportType=exportApk
 # build
 buildPath="$CURRENT_PWD"/../build
 
-# unity project path
-unityProjectPath="$CURRENT_PWD"/../project/DemoProject
+# internetdev, internetdis
+buildConfig=internetdis
 
-# unity build log file
-unityBuildLogFile="$CURRENT_PWD"/../log/build.log
+# 1
+bundleVersionCode=1
+
+# enterprise, appstore
+iOSExportType=enterprise
+
 
 ##### Setting Param End
 
@@ -52,17 +56,29 @@ done
 
 ##### Proc Input Param End
 
+# build
+buildPath="$CURRENT_PWD"/../build/$target
+
+# hotpatch
+hotpatchRoot=$buildPath/hotpatch
+
+# unity project path
+unityProjectPath="$CURRENT_PWD"/../project/DemoProject
+
+# unity build log file
+unityBuildLogFile="$CURRENT_PWD"/../log/build.log
+
 
 # # Keychain Password
 # # Store in Env KEYCHAIN_PASSWORD
 # # Code Sign Keychain
-# CODE_SIGN_KEYCHAIN=$HOME/Library/Keychains/login.keychain
+CODE_SIGN_KEYCHAIN=$HOME/Library/Keychains/login.keychain
 
 # # Unlock Keychain
 # echo "Unlock CodeSign Keychain"
-# security unlock-keychain -p $KEYCHAIN_PASSWORD $CODE_SIGN_KEYCHAIN
+security unlock-keychain -p $KEYCHAIN_PASSWORD $CODE_SIGN_KEYCHAIN
 
-$UNITY_PATH -quit -batchmode -projectPath $unityProjectPath -logFile $unityBuildLogFile -executeMethod CC.Release.ReleaseConsole.Release "target=$target" "version=$version" "buildPath=$buildPath" "codeSign=$codeSign" "androidExportType=$androidExportType" "appname=$appname" "projectCodeName=$projectCodeName"
+$UNITY_PATH -quit -batchmode -projectPath $unityProjectPath -logFile $unityBuildLogFile -executeMethod CC.Release.ReleaseConsole.Release "target=$target" "version=$version" "buildPath=$buildPath" "codeSign=$codeSign" "androidExportType=$androidExportType" "appname=$appname" "projectCodeName=$projectCodeName" "hotpatch=$hotpatchRoot" "bundleVersionCode=$bundleVersionCode" "buildConfig=$buildConfig" "iOSExportType=$iOSExportType"
 
 cd $CURRENT_PWD
 echo "Enter "$CURRENT_PWD
